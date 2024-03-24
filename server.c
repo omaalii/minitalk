@@ -10,35 +10,43 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <string.h>
+#include "minitalk.h"
 
-volatile sig_atomic_t received_signal = 0;
-char received_message[1024];
+static void print_server_pid(void)
+{
+    pid_t   server_pid;
 
-void handle_signal(int signal_number) {
-    received_signal = signal_number;
+    server_pid = getpid();
+    if (!server_pid)
+        put_str_fd("No Server PID", 2);
+    else
+    {
+        
+    }
 }
 
-int main() {
-    struct sigaction sa;
-    sa.sa_handler = handle_signal;
-    sa.sa_flags = 0;
+static void init_sigaction(void)
+{
+    struct sigaction    sa;
+
     sigemptyset(&sa.sa_mask);
-    sigaction(SIGUSR1, &sa, NULL);
+    sigaddset(&sa.sa_mask, SIGUSR1);
+    sigaddset(&sa.sa_mask, SIGUSR2);
+    sa.sa_handler = handler;
+    sa.sa_flags = SA_RESTART;
+    if(sigaction(SIGUSR2, &sa, NULL) == ERROR)
+        exit(EXIT_FAILURE);
+    if(sigaction(SIGUSR1, &sa, NULL) == ERROR)
+        exit(EXIT_FAILURE);
+}
 
-    printf("Server started. PID: %d\n", getpid());
+int main(void)
+{
+    print_server_pid(void);
+    init_sigaction();
+    while (1)
+        pause();
+    return (0);
 
-    while (1) {
-        if (received_signal == SIGUSR1) {
-            printf("Received message from client: %s\n", received_message);
-            received_signal = 0;
-        }
-    }
-
-    return 0;
 }
 

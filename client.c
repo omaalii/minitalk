@@ -10,26 +10,66 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-#include <string.h>
+#include "minitalk.h"
 
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <server_pid> <message>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
+static void	send_bits(char c, pid_t pid_server)
+{
+	int	bits;
 
-    pid_t server_pid = atoi(argv[1]);
-    char *message = argv[2];
+	bits = 7;
+	while(bits >= 0)
+	{
+		if ((c >> bits & 1) == 1)
+		{
+			//kill(pid_server, SIGUSR1);
+			if (kill(pid_server, SIGUSR1) == -1)
+			{	
+				put_str_fd("Error | Kill Failed", 2)
+				break ;
+			}
+		}
+		else
+		{
+			if(kill(pid_server, SIGUSR2 == ERROR))
+			{
+				put_str_fd("Error | Kill failed", 2)
+				break ;
+			}
+		}
+	}
+	--bits;
+	usleep(200);
+}
 
-    printf("Sending message to server: %s\n", message);
-    kill(server_pid, SIGUSR1);
+static int	valid_arg(char *msg, char *pid)
+{
+	int	t;
+	int	i;
 
-    strcpy(received_message, message);
-    kill(server_pid, SIGUSR1);
+	t = 1;
+	i = -1;
+	if (msg[0] == '\0')
+		t = 0;
+	while (t == 1 && pid[i++])
+	{
+		if (!(pid[i] >= '0' && pid[i] <= '9'))
+			t = 0;
+	}
+	return (t);
+}
+
+int	main(int argc, char **argv)
+{
+	int	j;
+
+	j = -1;
+	if (argc == 3 && valid_arg(argv[1], argv[2]))
+	{
+		while (argv[2][j++])
+			send_bits(argv[2][j], ft_atoi(argv[1]));
+	}
+	else
+		put_str_fd("Error,| Correct: ./client <PID> Message\n", 2);
 
     return 0;
 }
