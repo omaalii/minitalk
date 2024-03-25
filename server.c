@@ -12,6 +12,25 @@
 
 #include "minitalk.h"
 
+static void handler(int signal)
+{
+    static int  bits_count;
+    static char c;
+
+    bits_count = 0;
+    c = '\0';
+    c <<= 1;
+    if (signal == SIGUSR1)
+        c |= 1;
+    bits_count++;
+    if (bits_count == 8)
+    {
+        write(1, &c, 1);
+        bits_count = 0;
+        c = '\0';
+    }
+}
+
 static void print_server_pid(void)
 {
     pid_t   server_pid;
@@ -21,7 +40,9 @@ static void print_server_pid(void)
         put_str_fd("No Server PID", 2);
     else
     {
-        
+        put_str_fd("Server PID :", 1);
+        put_nbr_fd((int)server_pid, 1);
+        write(1, "\n", 1);
     }
 }
 
@@ -42,7 +63,7 @@ static void init_sigaction(void)
 
 int main(void)
 {
-    print_server_pid(void);
+    print_server_pid();
     init_sigaction();
     while (1)
         pause();

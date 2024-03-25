@@ -24,7 +24,7 @@ static void	send_bits(char c, pid_t pid_server)
 			//kill(pid_server, SIGUSR1);
 			if (kill(pid_server, SIGUSR1) == -1)
 			{	
-				put_str_fd("Error | Kill Failed", 2)
+				put_str_fd("Error | Kill Failed", 2);
 				break ;
 			}
 		}
@@ -32,7 +32,7 @@ static void	send_bits(char c, pid_t pid_server)
 		{
 			if(kill(pid_server, SIGUSR2 == ERROR))
 			{
-				put_str_fd("Error | Kill failed", 2)
+				put_str_fd("Error | Kill failed", 2);
 				break ;
 			}
 		}
@@ -63,14 +63,12 @@ int	main(int argc, char **argv)
 	int	j;
 
 	j = -1;
-	if (argc == 3 && valid_arg(argv[1], argv[2]))
+	if (argc == 3 && valid_arg(argv[1], argv[2]) && ft_atoi(argv[1]) != -1)
 	{
 		while (argv[2][j++])
 			send_bits(argv[2][j], ft_atoi(argv[1]));
 	}
 	else
 		put_str_fd("Error,| Correct: ./client <PID> Message\n", 2);
-
     return 0;
 }
-

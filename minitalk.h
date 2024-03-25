@@ -21,4 +21,8 @@
 
 # define ERROR -1
 
-void    put_str_fd(char *s, int fd);
+void	put_str_fd(char *str, int fd);
+int		ft_atoi(const char *str);
+void	put_nbr_fd(int nb, int fd);
+
+#endif
