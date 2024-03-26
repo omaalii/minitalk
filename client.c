@@ -21,7 +21,6 @@ static void	send_bits(char c, pid_t pid_server)
 	{
 		if ((c >> bits & 1) == 1)
 		{
-			//kill(pid_server, SIGUSR1);
 			if (kill(pid_server, SIGUSR1) == -1)
 			{	
 				put_str_fd("Error | Kill Failed", 2);
@@ -36,9 +35,10 @@ static void	send_bits(char c, pid_t pid_server)
 				break ;
 			}
 		}
+		--bits;
+		usleep(200);
 	}
-	--bits;
-	usleep(200);
+	
 }
 
 static int	valid_arg(char *msg, char *pid)
@@ -70,5 +70,5 @@ int	main(int argc, char **argv)
 	}
 	else
 		put_str_fd("Error,| Correct: ./client <PID> Message\n", 2);
-    return 0;
+    return (0);
 }
