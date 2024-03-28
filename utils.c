@@ -48,6 +48,7 @@ void	put_str_fd(char *str, int fd)
 	}
 }
 
+
 void	put_nbr_fd(int nb, int fd)
 {
 	if (nb == -2147483648)

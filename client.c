@@ -12,50 +12,49 @@
 
 #include "minitalk.h"
 
-static void	send_bits(char c, pid_t pid_server)
+static void	send_signal_bits(char character, pid_t pid_server)
 {
 	int	bits;
 
 	bits = 7;
-	while(bits >= 0)
+	while (bits >= 0)
 	{
-		if ((c >> bits & 1) == 1)
+		if ((character >> bits & 1) == 1)
 		{
-			if (kill(pid_server, SIGUSR1) == -1)
-			{	
-				put_str_fd("Error | Kill Failed", 2);
+			if (kill(pid_server, SIGUSR1) == ERROR)
+			{
+				put_str_fd("Error | Kill Fails", 2);
 				break ;
 			}
 		}
 		else
 		{
-			if(kill(pid_server, SIGUSR2 == ERROR))
+			if (kill(pid_server, SIGUSR2) == ERROR)
 			{
-				put_str_fd("Error | Kill failed", 2);
+				put_str_fd("Error | Kill Fails", 2);
 				break ;
 			}
 		}
 		--bits;
-		usleep(200);
+		usleep(350);
 	}
-	
 }
 
-static int	valid_arg(char *msg, char *pid)
+static int	is_valid_arg(char *pid, char *msg)
 {
-	int	t;
+	int	r;
 	int	i;
 
-	t = 1;
+	r = 1;
 	i = -1;
 	if (msg[0] == '\0')
-		t = 0;
-	while (t == 1 && pid[i++])
+		r = 0;
+	while (r == 1 && pid[++i])
 	{
 		if (!(pid[i] >= '0' && pid[i] <= '9'))
-			t = 0;
+			r = 0;
 	}
-	return (t);
+	return (r);
 }
 
 int	main(int argc, char **argv)
@@ -63,12 +62,12 @@ int	main(int argc, char **argv)
 	int	j;
 
 	j = -1;
-	if (argc == 3 && valid_arg(argv[1], argv[2]) && ft_atoi(argv[1]) != -1)
+	if (argc == 3 && is_valid_arg(argv[1], argv[2]))
 	{
-		while (argv[2][j++])
-			send_bits(argv[2][j], ft_atoi(argv[1]));
+		while (argv[2][++j])
+			send_signal_bits(argv[2][j], ft_atoi(argv[1]));
 	}
 	else
-		put_str_fd("Error,| Correct: ./client <PID> Message\n", 2);
-    return (0);
+		put_str_fd("Error | Correct: ./client <PID> Message\n", 2);
+	return (0);
 }
